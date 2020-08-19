@@ -1,0 +1,51 @@
+.get-content-form{
+    font-size: 20px;
+    text-align: left;
+    padding: 50px 0px 25px 10px ;
+}
+
+.input-box {
+    font-size: 16px;
+    width: 30%;
+    height: 30px;
+    border-radius: 7px;
+    box-shadow: 2px 2px #e3e4e4;
+    border: 1px;
+ 
+}
+
+.button-submit{
+    background-color: rgb(218, 218, 218, 0.68);
+    border-radius: 6px;
+    border: 0;
+    line-height: 1.9;
+    width: 70px;
+    font-size: 16px;
+}
+
+
+.message{
+    font-size: 20px;
+    color: rgb(250, 75, 42);
+}
+
+
+.table-get-content{
+    background-color: #fff;
+    color: rgba(0,0,0,0.8);
+
+}
+
+.table-get-content>tbody>tr>td{
+    padding: 10px 20px 0px 20px;
+    letter-spacing: 0.01rem;
+    font-size: 18px;
+    line-height: 1.4;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+tr td:first-child {
+  width: 11%;
+}
+

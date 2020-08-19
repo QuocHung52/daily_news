@@ -1,9 +1,49 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
 </head>
+
 <body>
-    <h3>This is the get content page</h3>
+    <form class="get-content-form"  action="{% url 'show_news:get_content' %}" method="post">
+    {% csrf_token %}
+        <label>Paste your URL here</label><br>
+        <input class="input-box" type="text" name="url" placeholder="URL of an article"> 
+        <input class="button-submit" type="submit" value="Extract"> 
+    </form>
+    {% if error_message %}<p class="message"><strong>{{ error_message }}</strong></p>{% endif %}
+
+    {% if news_object %}
+        <table class="table-get-content">
+            <tbody> 
+                <tr>
+                    <td>URL</td>
+                    <td><a href="{{news_object.url}}"> {{news_object.url}}</a></td>
+                </tr>
+        {% if news_object.content %}
+                <tr>
+                    <td>Title</td> 
+                    <td>{{news_object.title}}</td>
+                </tr>
+                <tr>
+                    <td>Author</td>
+                    <td>{{news_object.author}}</td>
+                </tr>
+                <tr>
+                    <td>Published time</td>
+                    <td>{{news_object.published_time}}</td>
+                </tr>
+                <tr>
+                    <td>Content</td>
+                    <td style="white-space: pre-line">{{news_object.content}}</td>
+                </tr>
+        {% else %}
+            </tbody>
+        </table>
+            <p class="message"> Cannot get content from that page</p>
+        {% endif %}
+    {% endif %}
+
 </body>
 </html>
