@@ -1,3 +1,36 @@
+body{
+    background: #fafafa;
+    font-family: sans-serif;
+    font-size:16px;
+
+}
+
+a:link{
+    text-decoration: none;
+}
+
+.header-top{
+    width: 100%;
+    background-color: #e3e4e4;
+    background-size: 46px 29px;
+    height: 50px;
+    left: 0;
+    position: absolute;
+    top:0;
+    padding-bottom: 0px;
+}
+
+.header-content {
+    font-size: 18px;
+    font-weight: 550;
+    height: auto;
+    position: relative;
+    top: 20px;
+    left: 20px;
+    right: 0;
+    width: 100%;
+}
+
 .get-content-form{
     font-size: 20px;
     text-align: left;
@@ -47,5 +80,65 @@
 
 tr td:first-child {
   width: 11%;
+}
+
+
+
+.news-list{
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    display: inline-block;
+    margin-bottom: 40px;
+    margin-right: 24px;
+    padding: 12px;
+    vertical-align: top;
+    width: 300px;
+}
+
+.news-list-image-content-top{
+    display: block;
+    margin-left:auto;
+    margin-right: auto;
+    max-width: 300px;
+    max-height: 250px;
+}
+
+.news-detail-header{
+    max-width: 800px;
+    padding-left: 5%;
+    padding-right: 5%; 
+    padding-top: 45px;
+}
+
+.news-detail-title{
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.news-detail-title a:link, a:visited{
+    color: #000000;
+    text-decoration: none;
+}
+.news-detail-title a:hover, a:active {
+   color: #6D0062;
+}
+
+.image-content-top img{
+    max-width: 700px
+}
+.news-detail-note{
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.news-detail-content{
+    white-space: pre-line;
+    letter-spacing: 0.01rem;
+    font-size: 18px;
+    line-height: 1.4;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 

@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
+</head>
+<body>
+    <header class="header-top"> 
+        <div>
+            <nav class="header-content">
+                <a href="{% url 'show_news:show_news' %}">Today's news</a>
+                <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
+            </nav>
+        </div>
+    </header>
+    
+    <div style="margin-top: 70px">
+        <form method = 'post' action="{% url 'show_news:source_of_news' %}">{% csrf_token %}
+            <label> Add new source </label>
+            <input class="input-box" style="width: 15%" type="text" name="url">
+            <input class="button-submit" type="submit" name="add" value=" Add ">
+        </form>
+        {% if error_message %}
+            <p><strong> {{error_message}} </strong></p>
+        {% endif %}
+
+        <h3> Below are the list of news pages</h3>
+
+        {% if object %}
+        <form method = 'post' action="{% url 'show_news:source_of_news' %}">{% csrf_token %}
+            {% for item in object %}
+                <input type="checkbox" name="item" value="{{item.page_name}}">
+                <label style="padding-left: 10px; font-size: 18px"> {{item.page_name}}</label><br>
+            {% endfor %}
+            <br><input class="button-submit" style="font-size: 16px; width: 80px;" type="submit" name="remove_page" value="Remove">
+        </form>
+        
+        {% else %}
+            <p><strong>There is nothing in the database, please add some pages</strong></p>
+        {% endif %}
+        
+
+        
+    </div>
+</body>

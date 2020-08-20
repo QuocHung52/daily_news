@@ -14,3 +14,11 @@ class Articles(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class Source_Of_News(models.Model):
+    page_name = models.CharField(max_length=100, default='')
+    page_url = models.CharField(max_length=250, default='')
+
+    def __str__(self):
+        return self.page_name

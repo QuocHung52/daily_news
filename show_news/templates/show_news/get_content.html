@@ -4,8 +4,16 @@
 <head>
     <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
 </head>
-
 <body>
+    <header class="header-top"> 
+        <div>
+            <nav class="header-content">
+                <a href="{% url 'show_news:show_news' %}">Today's news</a>
+                <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
+            </nav>
+        </div>
+    </header>
+    
     <form class="get-content-form"  action="{% url 'show_news:get_content' %}" method="post">
     {% csrf_token %}
         <label>Paste your URL here</label><br>
