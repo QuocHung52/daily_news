@@ -30,6 +30,12 @@ pip install -r requirements.txt
 To run the project, use this command:
 
 ```
+python manage.py scrape
+```
+
+To get new articles from all sources, use this command:
+
+```
 python manage.py runserver
 ```
 Now open your web browser and go to the url: http://127.0.0.1:8000/ (this is the default server of django)
