@@ -32,11 +32,21 @@
         {% if news_object.content %}
                 <tr>
                     <td>Title</td> 
-                    <td>{{news_object.title}}</td>
+                    <td><b>{{news_object.title}}</b></td>
+                </tr>
+                <tr>
+                    <td>Content image</td>
+                    <td>
+                         <div class="image-content-top">
+                            <a href="{{news_object.url}}">
+                                <img src="{{news_object.img_of_content_url}}" >
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Author</td>
-                    <td>{{news_object.author}}</td>
+                    <td>{{news_object.authors}}</td>
                 </tr>
                 <tr>
                     <td>Published time</td>

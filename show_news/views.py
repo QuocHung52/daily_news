@@ -11,23 +11,20 @@ def show_news(request):
     displayed_news = {}
     pages = Source_Of_News.objects.all()
     start_id_news = 0
-    end_id_news = 4
+    end_id_news = 5
     if 'view_older_news' in request.GET:
         start_id_news = int(request.GET['current_value'])
-        end_id_news = start_id_news + 4
+        end_id_news = start_id_news + 5
 
     for page in pages:
-        if 'view_older_news' not in request.GET:
-            _get_news(page.page_url, page.page_name)
         articles_objects = Articles.objects.filter(page_name=page.page_name).order_by('pk').reverse()[start_id_news:end_id_news]
+
         for item in articles_objects:
             if not item.image_content_url:
-                news_extractor = Extractor(item.url)
-                html = news_extractor.download_page()
-                image_content_url = news_extractor.get_img_of_content_url(html)
-                item.image_content_url = image_content_url
-                item.save()
-
+                image_extractor = Extractor(item.url)
+                html = image_extractor.download_page()
+                item.image_content_url = image_extractor.get_img_of_content_url(html)
+                item.save(update_fields=['image_content_url'])
         displayed_news[page.page_name] = articles_objects
 
     context = {'displayed_news': displayed_news, 'mode': 'show_news', 'current_number_news': end_id_news}
@@ -37,8 +34,9 @@ def show_news(request):
 def news_details(request, pk):
     item = Articles.objects.get(pk=pk)
     message = ''
+    get_image_content_status = False if item.image_content_url else True
     if not item.content:
-        news_extractor = _get_content(item.url)
+        news_extractor = _get_content(item.url, get_image_content_status)
         message = news_extractor.messages
         _update_database(item, news_extractor)
 
@@ -66,29 +64,34 @@ def source_of_news(request):
 
     if request.method == 'POST':
         if 'add' in request.POST:
-            print('request.POST')
+
             url = request.POST['url']
             if "https://" not in url:
                 message = 'The URL is not valid'
                 return render(request, 'show_news/source_of_news.html', {
-                    'object': pages, 'error_message': message})
-
-            elif Source_Of_News.objects.filter(page_url=url):
-                message = url + ' has already been in the database'
-                return render(request, 'show_news/source_of_news.html', {
-                    'object': pages, 'error_message': message})
+                    'object': pages, 'message': message})
             else:
-                item = Source_Of_News()
-                item.page_url = url
-                item.page_name = url.split('.')[1].title()
-                item.save()
+                try:
+                    item = Source_Of_News.objects.create(
+                        page_url=url,
+                        page_name=url.split('.')[1].title()
+                    )
+                except Exception as e:
+                    message = url + ' has already been in the database'
+                    return render(request, 'show_news/source_of_news.html', {
+                        'object': pages, 'message': message})
 
-            return redirect(request.path_info)
+            number_of_articles = _get_news(page_url=url,
+                                           page_name=url.split('.')[1].title(),
+                                           get_image_content_status=False)
+
+            message = 'Your newsfeed is updated with ' + str(number_of_articles) + ' new articles from ' + url
+
+            return render(request, 'show_news/source_of_news.html', {
+                'object': pages, 'message': message})
         if 'remove_page' in request.POST:
             page_to_remove = request.POST.getlist('item')
             for page in page_to_remove:
-                data = Articles.objects.filter(page_name=page)
-                data.delete()
                 data = Source_Of_News.objects.filter(page_name=page)
                 data.delete()
                 return redirect(request.path_info)
@@ -99,33 +102,20 @@ def get_content(request):
     if request.method == 'POST':
         url = request.POST['url']
         message = ''
-        news_object = None
-        type_of_news = ''
+        # type_of_news = ''
         if not url:
             message = "You didn't input anything."
             return render(request, 'show_news/get_content.html', {
                 'error_message': message})
-        if "https://" not in url:
+        elif "https://" not in url:
             message = 'The URL is not valid'
             return render(request, 'show_news/get_content.html', {
                 'error_message': message})
 
-        if Articles.objects.filter(url=url).exists():
-            news_object = Articles.objects.get(url=url)
-            if news_object.content:
-                message = ''
-            else:
-                news_extractor = _get_content(url)
-                message = news_extractor.messages
-                _update_database(news_object, news_extractor)
-
         else:
-            news_extractor = _get_content(url)
-            message = news_extractor.messages
-
-            news_object = Articles()
-            _update_database(news_object, news_extractor)
-            # type_of_news = get_type_of_news([news_object.title])
+            news_object = _get_content(url)
+            message = news_object.messages
+            # type_of_news = get_type_of_news([news_object])
 
         return render(request, 'show_news/get_content.html', {
             'error_message': message, 'news_object': news_object})

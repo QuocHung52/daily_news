@@ -29,7 +29,7 @@ class Extractor:
         self.articles = {}
         self.messages = []
 
-    def extract_content(self):
+    def extract_content(self, get_image_content_status=True):
         url = self.url
         html = self.download_page()
         if not html:
@@ -52,10 +52,11 @@ class Extractor:
             logging.warning('Cannot get publised date from article')
         self.published_time = published_time
 
-        img_of_content_url = self.get_img_of_content_url(html)
-        if not img_of_content_url:
-            logging.warning('Cannot get main image url from article')
-        self.img_of_content_url = img_of_content_url
+        if get_image_content_status:
+            img_of_content_url = self.get_img_of_content_url(html)
+            if not img_of_content_url:
+                logging.warning('Cannot get main image url from article')
+            self.img_of_content_url = img_of_content_url
 
         content = self.get_content(html)
         if not content:
@@ -136,18 +137,24 @@ class Extractor:
             else:
                 authors = ''
 
-        # Remove duplicate element from list, solution from: https://stackoverflow.com/a/480227
         def unique_check(author_list):
             seen = set()
             seen_add = seen.add
             return [x.title() for x in author_list if not (x in seen or seen_add(x))]
 
         def valid_check_author(author_list):
-            authors = [x for x in author_list]
-            for author in authors:
+            authors = ''
+            for author in author_list:
                 if re.search(r'(\d)|([hH]ttp)', author):
                     author_list.remove(author)
-            return unique_check(author_list)
+            author_list = unique_check(author_list)
+
+            for x in author_list:
+                authors = ''.join(x + ', ')
+            if len(authors) > 3:
+                if authors[-2] == ',':
+                    authors = authors[0:-2]
+            return authors
 
         return valid_check_author(authors)
 
@@ -257,9 +264,6 @@ class Extractor:
         number_of_articles = len(article_tags)
         for tag in article_tags:
             article_url = urljoin(self.url, tag['href'])
-
-            if "https://" not in article_url:
-                continue
             article_title = tag.text.strip()
             articles[article_url] = article_title
 
