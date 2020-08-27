@@ -11,11 +11,7 @@ def _get_content(url, get_image_content_status=True):
 
 def _update_database(articles_object, news_extractor):
     articles_object.content = news_extractor.content
-    for x in news_extractor.authors:
-        articles_object.author = ''.join(x + ', ')
-    if len(articles_object.author) > 3:
-        if articles_object.author[-2] == ',':
-            articles_object.author = articles_object.author[0:-2]
+    articles_object.author = news_extractor.authors
     if not articles_object.image_content_url:
         articles_object.image_content_url = news_extractor.img_of_content_url
 
