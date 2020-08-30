@@ -33,6 +33,7 @@ def show_news(request):
 
 def news_details(request, pk):
     item = Articles.objects.get(pk=pk)
+    related_news = Articles.objects.filter(page_name=item.page_name).filter(pk__lt=pk).order_by('pk').reverse()[0:4]
     message = ''
     get_image_content_status = False if item.image_content_url else True
     if not item.content:
@@ -40,7 +41,7 @@ def news_details(request, pk):
         message = news_extractor.messages
         _update_database(item, news_extractor)
 
-    context = {'message': message, 'object': item}
+    context = {'message': message, 'object': item, 'related_news': related_news}
 
     return render(request, 'show_news/news_details.html', context)
 

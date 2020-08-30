@@ -5,43 +5,70 @@
     <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
 </head>
 <body>   
-    <header class="header-top"> 
-        <div>
-            <nav class="header-content">
-                <a href="{% url 'show_news:show_news' %}">Today's news</a>
-                <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
-            </nav>
-        </div>
-    </header>
-    <div class="news-detail-header">
-        <div class="news-detail-title">
-            <a href="{{object.url}}">{{object.title}}</a>            
-        </div>
-
-        {% if object.image_content_url %}
-        <div class="image-content-top">
-            <a href="{{object.url}}">
-                <img src="{{object.image_content_url}}" >
-            </a>
-        </div>
-        {% endif %}
-
-        <div class="news-detail-note">
-            <span> From <b><i>{{object.page_name}}</i></b> by <b><i> {{object.author}}  </i></b></span>
-            <span> | {{object.published_time}}</span>
-        </div>
-    </div>     
-        {% if message %}
-            <p>{{message}}</p>
-        {% endif %}
-
-    <div class="news-detail-content">
-        {% if object.content %}
-           <p>{{object.content}}</p>
-        {% else %}
-            <p> Cannot get content from that page</p>
-        {% endif %}
+    <div style="display: block">
+        <header class="header-top"> 
+                <nav class="header-content">
+                    <a href="{% url 'show_news:show_news' %}">Today's news</a>
+                    <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
+                </nav>
+        </header>
     </div>
+
+        
+
+            <div class="news-detail-header">
+                <div class="news-detail-title">
+                    <a href="{{object.url}}">{{object.title}}</a>            
+                </div>
+
+                {% if object.image_content_url %}
+                <div class="image-content-top">
+                    <a href="{{object.url}}">
+                        <img src="{{object.image_content_url}}" >
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="news-detail-note">
+                    <span> From <b><i>{{object.page_name}}</i></b> by <b><i> {{object.author}}  </i></b></span>
+                    <span> | {{object.published_time}}</span>
+                </div>
+            </div>     
+                {% if message %}
+                    <p>{{message}}</p>
+                {% endif %}
+    <div>
+        <div class="news-detail-content">
+            {% if object.content %}
+               <p>{{object.content}}</p>
+            {% else %}
+                <p> Cannot get content from that page</p>
+            {% endif %}
+        </div>
+
+     
+       <div class="side_suggest_news">
+            {% for article in related_news %}
+               <div class="news-list">
+                    {% if article.image_content_url %}
+                    <div >
+                        <a href="{% url 'show_news:news_details' article.pk %}">
+                            <img src="{{article.image_content_url}}" class="news-list-image-content-top">
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <div >
+                        <span> <a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></span>
+                        <br>
+                        <span class="news-detail-note"> by {{article.page_name}}</span>
+                    </div>
+                </div>
+            {% endfor %}  
+        </div>
+    </div>
+
+
 
 </body>
 </html>

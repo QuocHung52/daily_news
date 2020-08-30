@@ -16,19 +16,14 @@ a:link{
     height: 50px;
     left: 0;
     position: absolute;
-    top:0;
-    padding-bottom: 0px;
+    top:0;  
 }
 
 .header-content {
     font-size: 18px;
     font-weight: 550;
-    height: auto;
-    position: relative;
-    top: 20px;
-    left: 20px;
-    right: 0;
-    width: 100%;
+    padding-top: 20px;
+    padding-left: 20px;
 }
 
 .get-content-form{
@@ -140,5 +135,11 @@ tr td:first-child {
     line-height: 1.4;
     padding-left: 5%;
     padding-right: 5%;
+    width: 65%;
+    float: left;
 }
 
+.side_suggest_news{
+    width: 25%;
+    float: right;
+}
