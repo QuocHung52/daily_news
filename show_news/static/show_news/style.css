@@ -135,11 +135,21 @@ tr td:first-child {
     line-height: 1.4;
     padding-left: 5%;
     padding-right: 5%;
-    width: 65%;
+    width: 60%;
     float: left;
 }
 
 .side_suggest_news{
+    float: left;
     width: 25%;
-    float: right;
+    padding-top: 70px;
+}
+
+@media screen and (max-width: 600px) {
+  .news-detail-content {
+    width: 100%%;
+  }
+  .side_suggest_news{
+    width: 100%;
+  }
 }

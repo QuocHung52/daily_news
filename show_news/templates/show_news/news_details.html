@@ -13,31 +13,30 @@
                 </nav>
         </header>
     </div>
+    <div class="news-detail-header">
+        <div class="news-detail-title">
+            <a href="{{object.url}}">{{object.title}}</a>            
+        </div>
 
-        
+        {% if object.image_content_url %}
+        <div class="image-content-top">
+            <a href="{{object.url}}">
+                <img src="{{object.image_content_url}}" >
+            </a>
+        </div>
+        {% endif %}
 
-            <div class="news-detail-header">
-                <div class="news-detail-title">
-                    <a href="{{object.url}}">{{object.title}}</a>            
-                </div>
+        <div class="news-detail-note">
+            <span> From <b><i>{{object.page_name}}</i></b> by <b><i> {{object.author}}  </i></b></span>
+            <span> | {{object.published_time}}</span>
+        </div>
+    </div>  
 
-                {% if object.image_content_url %}
-                <div class="image-content-top">
-                    <a href="{{object.url}}">
-                        <img src="{{object.image_content_url}}" >
-                    </a>
-                </div>
-                {% endif %}
-
-                <div class="news-detail-note">
-                    <span> From <b><i>{{object.page_name}}</i></b> by <b><i> {{object.author}}  </i></b></span>
-                    <span> | {{object.published_time}}</span>
-                </div>
-            </div>     
-                {% if message %}
-                    <p>{{message}}</p>
-                {% endif %}
-    <div>
+    {% if message %}
+        <p>{{message}}</p>
+    {% endif %}
+    
+    <div style="content:""; display: table; clear: both;">
         <div class="news-detail-content">
             {% if object.content %}
                <p>{{object.content}}</p>
@@ -68,7 +67,7 @@
         </div>
     </div>
 
-
+    <!-- <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tonight, ABC will celebrate the legacy of Chadwick Boseman with a special presentation of Marvel Studios’ Black Panther followed by the ABC News Special: Chadwick Boseman - A Tribute for a King. It all starts tonight at 8/7c on ABC. <a href="https://t.co/LjtN9bTwzx">pic.twitter.com/LjtN9bTwzx</a></p>&mdash; Disney (@Disney) <a href="https://twitter.com/Disney/status/1300045017482817536?ref_src=twsrc%5Etfw">August 30, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
 
 </body>
 </html>
