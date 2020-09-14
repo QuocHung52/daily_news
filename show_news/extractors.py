@@ -27,7 +27,7 @@ class Extractor:
         self.img_of_content_url = ''
         self.authors = []
         self.articles = {}
-        self.messages = []
+        self.messages = ''
 
     def extract_content(self, get_image_content_status=True):
         url = self.url
@@ -83,27 +83,24 @@ class Extractor:
         return response
 
     def get_title(self, html):
-        title = []
+        title = ''
         # Find with meta tag
         value = re.compile(r'[tT]itle')
         for attr in ['property', 'name']:
             matched_tag = html.find_all('meta', attrs={attr: value})
             for tag in matched_tag:
-                title.append(tag.attrs['content'])
+                if tag.attrs['content']:
+                    return tag.attrs['content']
 
         if not title:
             title_tag = html.find('title')
-            title = title_tag.text.strip()
+            if title_tag:
+                title = title_tag.text.strip()
 
-        def unique_check(title_list):
-            seen = set()
-            seen_add = seen.add
-            return [x.title() for x in title_list if not (x in seen or seen_add(x))]
-
-        return unique_check(title)[0]
+        return title
 
     def get_authors(self, html):
-        authors = []
+        found_authors = []
         matched_tag = []
 
         # Find with meta tag
@@ -111,12 +108,13 @@ class Extractor:
         for attr in ['property', 'name']:
             matched_tag = html.find_all('meta', attrs={attr: value})
             for tag in matched_tag:
-                authors.append(tag.attrs['content'])
+                found_authors.append(tag.attrs['content'])
 
-        # Try harder
-        if not authors:
+        # Not in meta tag? Search in main content
+        if not found_authors:
             attrs = ['rel', 'class', 'href', 'name', 'id', 'itemprop']
-            value = re.compile('[\w|\-|\/|\.]?([aA]uthor)|([eE]ditor)[\w|\-|\/|\.]?')
+            value = re.compile(
+                '[\w|\-|\/|\.]?([aA]uthor)|([eE]ditor)[\w|\-|\/|\.]?')
             matched_tag = []
 
             for attr in attrs:
@@ -127,36 +125,36 @@ class Extractor:
                 for tag in matched_tag:
                     text_inside = tag.text.strip()
                     text_inside = re.sub(' [ \t]+', ' ', text_inside)
-
-                    # Remove words like "By", "From" and delimiters: "-","," from author names
                     if 0 < len(text_inside) < 100:
-                        names = re.sub('([bB][yY])|([fF][rR][oO][mM])[\s\:]', '', text_inside)
-                        names = re.split('[\-\,]', names)
-                        authors.extend(names)
+                        found_authors.extend(text_inside)
 
-            else:
-                authors = ''
+        if not found_authors:
+            return None
+
+        author_list = []
+        for author in found_authors:
+            # Remove words like "By", "From" and delimiters: "-","," from author names
+            if re.search(r'(\d)|([hH]ttp)', author):
+                continue
+            names = re.sub(
+                '([bB][yY])|([fF][rR][oO][mM])[\s\:]|[aA][nN][dD]', '', author)
+            names = re.split('[\-\,]', names)
+            author_list.extend(names)
 
         def unique_check(author_list):
             seen = set()
             seen_add = seen.add
             return [x.title() for x in author_list if not (x in seen or seen_add(x))]
 
-        def valid_check_author(author_list):
-            authors = ''
-            for author in author_list:
-                if re.search(r'(\d)|([hH]ttp)', author):
-                    author_list.remove(author)
-            author_list = unique_check(author_list)
+        author_list = unique_check(author_list)
 
-            for x in author_list:
-                authors = ''.join(x + ', ')
-            if len(authors) > 3:
-                if authors[-2] == ',':
-                    authors = authors[0:-2]
-            return authors
-
-        return valid_check_author(authors)
+        authors = ''
+        for x in author_list:
+            authors = authors + x + ', '
+        if len(authors) > 3:
+            if authors[-2] == ',':
+                authors = authors[0:-2]
+        return authors
 
     def get_img_of_content_url(self, html):
         if not html:
@@ -191,7 +189,8 @@ class Extractor:
 
             # try to look backward
             else:
-                date_time_match = re.search(DATE_AND_TIME_BACKWARD, time_tag.decode())
+                date_time_match = re.search(
+                    DATE_AND_TIME_BACKWARD, time_tag.decode())
                 if date_time_match:
                     return date_time_match.group(0).strip()
             return ''
@@ -221,17 +220,23 @@ class Extractor:
         body = cleaned_html.find('body')
         extractor = Content_Extractor.create(body)
         content = extractor.extract()
+        if not content:
+            self.messages = 'Cannot get content from ' + self.url
+            return ''
+        content = content.split('\n')
         return content
 
     def clean_tags(self, html):
         # Unwarp tags
-        merging_tags = ['p', 'br', 'li', 'table', 'tbody', 'tr', 'td', 'theader', 'tfoot']
+        merging_tags = ['p', 'br', 'li', 'table',
+                        'tbody', 'tr', 'td', 'theader', 'tfoot']
         tags = html.find_all(merging_tags)
         for tag in tags:
             tag.unwrap()
 
         # Remove tags:
-        remove_tag = ['head', 'script', 'link', 'style', 'form', 'option', 'header', 'footer', 'nav', 'noscript', 'aside']
+        remove_tag = ['head', 'script', 'link', 'style', 'form',
+                      'option', 'header', 'footer', 'nav', 'noscript', 'aside']
         tags = html.find_all(remove_tag)
         for tag in tags:
             tag.decompose()
@@ -246,7 +251,7 @@ class Extractor:
         url = self.url
         html = self.download_page()
         if not html:
-            return
+            return '', ''
         self.html = html
 
         if url[-1] == '/':
@@ -256,7 +261,7 @@ class Extractor:
 
         if not article_tags:
             logging.warning('Cannot get any news from %s' % url)
-            return ''
+            return '', ''
 
         articles = {}
         article_url = []

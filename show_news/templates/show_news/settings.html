@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/utilities.css' %}">
+    <script src="https://kit.fontawesome.com/da72a545a2.js" crossorigin="anonymous"></script>
+
+    <title>Daily News</title>
+</head>
+
+<body>
+    <header id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-container">
+                <h1>
+                    <a class="logo" href="{% url 'show_news:show_news' %}">
+                        <i class="far fa-newspaper"></i> Daily News</a>
+                </h1>
+                <ul>
+                    <li><a href="{% url 'show_news:show_news' %}">Home</a></li>
+                    <li><a class="current" href="{% url 'show_news:settings' %}">Setting</a></li>
+                    <li><a href="#about"> About</a></li>
+                    <li><a class="btn-search" href="#"><i class="fas fa-search"></i></a></li>
+                </ul>
+            </div>
+            <div id="search" class="hidden">
+                <form class="submit-field search-field" action="{% url 'show_news:search' %}">
+                    <input type="text" name='search_box' placeholder="Search for...">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="content normal-view setting">
+        <section id="sources">
+            <div class="setting-name">
+                <h2> Manage Sources</h2>
+                <form class="submit-field" method='post' action="{% url 'show_news:settings' %}">{% csrf_token %}
+                    <label class="label-input-text" for="url">Title</label>
+                    <input type="text" name="url" id="url">
+                    <input class="btn btn-light" type="submit" name="add" value=" Add ">
+                </form>
+                {% if message %}
+                <p class="text-message"> {{message}}</p>
+                {% endif %}
+            </div>
+
+            <div class="setting-properties">
+                {% if object %}
+                <form class="setting-page-items" method='post' action="{% url 'show_news:settings' %}">{% csrf_token %}
+                    {% for item in object %}
+                    <div class="setting-page-item">
+                        <input type="checkbox" name="item" id='{{item.page_name}}' value="{{item.page_name}}">
+                        <label for="{{item.page_name}}"> {{item.page_name}}</label>
+                    </div>
+                    {% endfor %}
+                    <div class="setting-page-item btn-remove">
+                        <input class="btn btn-dark" type="submit" name="remove_page" value="Remove">
+                    </div>
+                </form>
+
+                {% else %}
+                <p class="text-message">There is nothing in the database, please add some pages</p>
+                {% endif %}
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        search = document.querySelector('.navbar #search')
+        btn = document.querySelector('.btn-search')
+        btn.onclick = function () {
+            search.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>

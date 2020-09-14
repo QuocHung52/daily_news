@@ -10,7 +10,6 @@ class Articles(models.Model):
     image_content_url = models.CharField(max_length=250)
     author = models.CharField(max_length=250)
     published_time = models.CharField(max_length=250)
-    content = models.TextField()
 
     def __str__(self):
         return self.url

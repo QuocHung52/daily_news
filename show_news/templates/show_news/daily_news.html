@@ -1,97 +1,90 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/utilities.css' %}">
+    <script src="https://kit.fontawesome.com/da72a545a2.js" crossorigin="anonymous"></script>
+
+    <title>Daily News</title>
 </head>
+
 <body>
-    <header> 
-        <div class="header-top">
-            <nav class="header-content">
-                <a href="{% url 'show_news:show_news' %}">Today's news</a>
-                <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
-            </nav>
-        </div>
+    <header id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-container">
+                <h1>
+                    <a class="logo" href="{% url 'show_news:show_news' %}">
+                        <i class="far fa-newspaper"></i> Daily News</a>
+                </h1>
+                <ul>
+                    <li><a class="current" href="{% url 'show_news:show_news' %}">Home</a></li>
+                    <li><a href="{% url 'show_news:settings' %}">Setting</a></li>
+                    <li><a href="#about"> About</a></li>
+                    <li><a class="btn-search" href="#"><i class="fas fa-search"></i></a></li>
+                </ul>
+            </div>
+            <div id="search" class="hidden">
+                <form class="submit-field search-field" action="{% url 'show_news:search' %}">
+                    <input type="text" name='search_box' placeholder="Search for...">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
     </header>
-    
-    <form style="padding-top: 60px; margin-left: 25px" action="{% url 'show_news:search_news' %}">
-        <input  class="input-box" type="text"  name = 'search_box' placeholder="Search..." >
-        <button class="button-submit" type="submit" >Search</button>
-    </form>
 
-    <h3 style="margin-left: 15px">Recent News from <a style="font-style: italic; text-decoration: underline;" href="{% url 'show_news:source_of_news' %}"> these pages </a></h3>
+    <main class="content wide-view">
+        <section id="news-feed" class="news-feed">
+            <div class="grid-items">
+                {% for page_name, articles in displayed_news.items %}
+                {% for article in articles %}
+                <div class="news-items">
+                    {% if not article.image_content_url %}
+                    <a href="{% url 'show_news:news_details' article.pk %}">
+                        <img src="{% static 'show_news/img/default-img.jpg' %}">
+                    </a>
+                    {% else %}
+                    <a href="{% url 'show_news:news_details' article.pk %}">
+                        <img src="{{article.image_content_url}}">
+                    </a>
 
-    {% if mode == 'show_news' %}
-        {% if displayed_news %}
-        <div style="margin: auto; width: 98%">
-        {% for key, item in displayed_news.items %}
-            {% for article in item %}
-                <div class="news-list">
-                    {% if article.image_content_url %}
-                        <div>
-                            <a href="{% url 'show_news:news_details' article.pk %}">
-                                <img src="{{article.image_content_url}}" class="news-list-image-content-top">
-                            </a>
-                        </div>
                     {% endif %}
 
-                    <div >
-                        <span> <a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></span>
-                        <br>
-                        <span class="news-detail-note"> by {{key}}</span>
-                    </div>
+                    <p><a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></p>
+                    <p> by <span class="text-primary">{{page_name}}</span></p>
                 </div>
-
-            {% endfor %}              
-        {% endfor %}
-        </div>
-        {% endif %}
-    {% endif %}
-
-    {% if mode == 'show_search_result' %}
-    <div>
-        <div style="display: inline-block; vertical-align: middle">
-            <p>Keyword: <b><i>"{{ keyword }}" </i></b> </p>
-        </div>
-        <div style="display: inline-block; vertical-align: middle">
-            <form style="margin-left: 30px; display: inline-block; vertical-align: middle" action=" {% url 'show_news:show_news' %}">
-                <input type="submit" value="Clear all">
-            </form>
-        </div>
-    </div> 
-        {% if result %}
-        <div>
-            {% for article in result %}
-               <div class="news-list">
-                    {% if article.image_content_url %}
-                    <div>
-                        <a href="{% url 'show_news:news_details' article.pk %}">
-                            <img src="{{article.image_content_url}}" class="news-list-image-content-top">
-                        </a>
-                    </div>
-                    {% endif %}
-
-                    <div >
-                        <span> <a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></span>
-                        <br>
-                        <span class="news-detail-note"> by {{article.page_name}}</span>
-                    </div>
-                </div>
-            {% endfor %}              
-        </div>
-        {% endif %}    
-    {% endif %}
-
-    {% if message %}
-        <p><strong>{{ message }}</strong></p>
-    {% else %}
-        <div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            <div class="view-more">
+                <form action=" {% url 'show_news:show_news' %}">
+                    <input type="hidden" name="page" value="{{ page }}">
+                    <input class="btn btn-light" type="submit" value="Show More News" name="view-more">
+                </form>
+            </div>
+        </section>
+        <!-- <section class="view-more">
             <form action=" {% url 'show_news:show_news' %}">
-                <input type="hidden" name="current_value" value="{{ current_number_news }}">
-                <input class="button-submit" style="width: 200px; left: 40%; position: relative; margin-bottom: 20px;" type="submit" value="View older news" name="view_older_news">
-            </form>
-        </div>
-    {% endif %}
-    
+                <input type="hidden" name="page" value="{{ page }}">
+                <input class="btn btn-light" type="submit" value="Show More News" name="view-more">
+            </form> -->
+        <!-- <a href="#"><i class="fas fa-chevron-left"></i> Previous page</a>
+                <a href="#">Next page <i class="fas fa-chevron-right"></i> </a> -->
+
+        <!-- </section> -->
+
+
+    </main>
+    <script>
+        search = document.querySelector('.navbar #search')
+        btn = document.querySelector('.btn-search')
+        btn.onclick = function () {
+            search.style.display = 'block';
+        }
+    </script>
 </body>
+
 </html>

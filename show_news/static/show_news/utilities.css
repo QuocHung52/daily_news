@@ -1,0 +1,77 @@
+
+/* Main content */
+.content {
+    width: 100%;
+    margin: 50px auto 0px;
+}
+
+
+/* Submit form */
+.submit-field {
+    display: flex;
+    max-width: 1100px;
+}
+
+.submit-field input {
+    font-size: 1rem;
+    border: 1.5px solid #7d90a0;
+    border-radius: 6px;
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.submit-field input:focus {
+    background-color: #fff;
+    outline-color: #697A89;
+}
+
+/* Text appearance */
+.text-message {
+    color: #cc6c82;
+}
+
+.text-primary {
+    color: #e2127A;
+}
+
+.text-secondary {
+    color: #697A89;
+}
+
+
+/* View width */
+.wide-view {
+    max-width: 1400px;
+}
+
+.normal-view {
+    max-width: 1100px;
+}
+
+
+/* Button */
+.btn {
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    padding: 6px;    
+}
+
+.btn-light {
+    background-color: #f0f1e8;
+    color: #504d4d;
+}
+
+.btn-light:hover {
+    background-color: #e7e8d0;
+}
+
+.btn-dark {
+    background-color: #538257;
+    color: #eceaea;
+}
+
+.btn-dark:hover {
+    background-color: #496d4c;
+    color: #fff;
+}

@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/utilities.css' %}">
+    <script src="https://kit.fontawesome.com/da72a545a2.js" crossorigin="anonymous"></script>
+
+    <title>Daily News</title>
+</head>
+
+<body>
+    <header id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-container">
+                <h1>
+                    <a class="logo" href="{% url 'show_news:show_news' %}">
+                        <i class="far fa-newspaper"></i> Daily News</a>
+                </h1>
+                <ul>
+                    <li><a href="{% url 'show_news:show_news' %}">Home</a></li>
+                    <li><a href="{% url 'show_news:settings' %}">Setting</a></li>
+                    <li><a href="#about"> About</a></li>
+                    <li><a class="current btn-search" href="#"><i class="fas fa-search"></i></a></li>
+                </ul>
+            </div>
+            <div id="search">
+                <form class="submit-field search-field" action="{% url 'show_news:search' %}">
+                    <input type="text" name='search_box' placeholder="Search for...">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main class="content normal-view">
+        <div class="result-header">
+            <p class="text-message">{{message}}</p>
+        </div>
+
+        <div class="grid-items">
+            {% for article in result %}
+            <div class="news-items">
+                {% if not article.image_content_url %}
+                <a href="{% url 'show_news:news_details' article.pk %}">
+                    <img src="{% static 'show_news/img/default-img.jpg' %}">
+                </a>
+                {% else %}
+                <a href="{% url 'show_news:news_details' article.pk %}">
+                    <img src="{{article.image_content_url}}">
+                </a>
+
+                {% endif %}
+                <p> <a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></p>
+                <p> by <span class="text-primary">{{article.page_name}}</span></p>
+            </div>
+            {% endfor %}
+        </div>
+
+
+
+    </main>
+</body>
+
+</html>

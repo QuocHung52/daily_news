@@ -1,73 +1,86 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'show_news/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'show_news/utilities.css' %}">
+    <script src="https://kit.fontawesome.com/da72a545a2.js" crossorigin="anonymous"></script>
+
+    <title>Daily News</title>
 </head>
-<body>   
-    <div style="display: block">
-        <header class="header-top"> 
-                <nav class="header-content">
-                    <a href="{% url 'show_news:show_news' %}">Today's news</a>
-                    <a style="margin-left: 35px" href="{% url 'show_news:get_content' %}">Get Content</a>
-                </nav>
-        </header>
-    </div>
-    <div class="news-detail-header">
-        <div class="news-detail-title">
-            <a href="{{object.url}}">{{object.title}}</a>            
-        </div>
 
-        {% if object.image_content_url %}
-        <div class="image-content-top">
-            <a href="{{object.url}}">
-                <img src="{{object.image_content_url}}" >
-            </a>
-        </div>
-        {% endif %}
+<body>
+    <header id="header">
+        <nav id="navbar" class="navbar">
+            <div class="nav-container">
+                <h1>
+                    <a class="logo" href="{% url 'show_news:show_news' %}">
+                        <i class="far fa-newspaper"></i> Daily News</a>
+                </h1>
+                <ul>
+                    <li><a class="current" href="{% url 'show_news:show_news' %}">Home</a></li>
+                    <li><a href="{% url 'show_news:settings' %}">Setting</a></li>
+                    <li><a href="#about"> About</a></li>
+                    <li><a class="btn-search" href="#"><i class="fas fa-search"></i></a></li>
+                </ul>
+            </div>
+            <div id="search" class="hidden">
+                <form class="submit-field search-field" action="{% url 'show_news:search' %}">
+                    <input type="text" name='search_box' placeholder="Search for...">
+                    <button class="btn btn-light" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
 
-        <div class="news-detail-note">
-            <span> From <b><i>{{object.page_name}}</i></b> by <b><i> {{object.author}}  </i></b></span>
-            <span> | {{object.published_time}}</span>
-        </div>
-    </div>  
-
-    {% if message %}
-        <p>{{message}}</p>
-    {% endif %}
-    
-    <div style="content:""; display: table; clear: both;">
-        <div class="news-detail-content">
-            {% if object.content %}
-               <p>{{object.content}}</p>
-            {% else %}
-                <p> Cannot get content from that page</p>
+    <main class="content normal-view">
+        <section class="news-detail-header">
+            <h2><a href="{{object.url}}">{{object.title}}</a></h2>
+            {% if not object.image_content_url %}
+            <a href="{{object.url}}"><img src="{% static 'show_news/img/default-img.jpg' %}"></a>
+            {% else%}
+            <a href="{{object.url}}"><img src="{{object.image_content_url}}"></a>
             {% endif %}
-        </div>
-
-     
-       <div class="side_suggest_news">
-            {% for article in related_news %}
-               <div class="news-list">
-                    {% if article.image_content_url %}
-                    <div >
-                        <a href="{% url 'show_news:news_details' article.pk %}">
-                            <img src="{{article.image_content_url}}" class="news-list-image-content-top">
-                        </a>
-                    </div>
-                    {% endif %}
-
-                    <div >
-                        <span> <a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></span>
-                        <br>
-                        <span class="news-detail-note"> by {{article.page_name}}</span>
-                    </div>
+            <p> From <span class="text-primary">{{object.page_name}}</span> by <span
+                    class="text-primary">{{object.author}}</span> | {{object.published_time}} </p>
+            {% if message %} <p class="text-message">{{message}}</p>{% endif %}
+        </section>
+        <section class="news-detail-content">
+            <div class="column-1">
+                {% for p in content %}
+                <p>{{p}}</p>
+                {% endfor %}
+            </div>
+            <div class="column-2">
+                <div class="item">
+                    <p class="text-primary">More with {{object.page_name}}</p>
                 </div>
-            {% endfor %}  
-        </div>
-    </div>
+                {% for article in related_news %}
+                <div class="item">
 
-    <!-- <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Tonight, ABC will celebrate the legacy of Chadwick Boseman with a special presentation of Marvel Studios’ Black Panther followed by the ABC News Special: Chadwick Boseman - A Tribute for a King. It all starts tonight at 8/7c on ABC. <a href="https://t.co/LjtN9bTwzx">pic.twitter.com/LjtN9bTwzx</a></p>&mdash; Disney (@Disney) <a href="https://twitter.com/Disney/status/1300045017482817536?ref_src=twsrc%5Etfw">August 30, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+                    <a href="{% url 'show_news:news_details' article.pk %}">
+                        <img src="{{article.image_content_url}}">
+                    </a>
 
+                    <p class="related-news-title"><a href="{% url 'show_news:news_details' article.pk %}">
+                            {{ article.title }} </a></p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        search = document.querySelector('.navbar #search')
+        btn = document.querySelector('.btn-search')
+        btn.onclick = function () {
+            search.style.display = 'block';
+        }
+    </script>
 </body>
+
 </html>
