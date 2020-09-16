@@ -75,3 +75,9 @@
     background-color: #496d4c;
     color: #fff;
 }
+
+
+/* Display */
+.hidden {
+    display: none;
+}

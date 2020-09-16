@@ -11,7 +11,7 @@ ARTICLE_PER_PAGE = 4
 
 def show_news(request):
     displayed_news = {}
-    sources = Source_Of_News.objects.all()
+    all_sources = Source_Of_News.objects.all()
     page = 1
     start_id, end_id = 0, ARTICLE_PER_PAGE
     if 'view-more' in request.GET:
@@ -19,7 +19,7 @@ def show_news(request):
         start_id = page*ARTICLE_PER_PAGE
         end_id = start_id + ARTICLE_PER_PAGE
 
-    for source in sources:
+    for source in all_sources:
         articles_objects = Articles.objects.filter(page_name=source.page_name).order_by(
             'pk').reverse()[start_id:end_id]
 
@@ -29,7 +29,26 @@ def show_news(request):
     return render(request, 'show_news/daily_news.html', context)
 
 
+def view_source(request, source):
+    NEWS_PER_PAGE = ARTICLE_PER_PAGE*2
+    all_sources = Source_Of_News.objects.all()
+    page = 1
+    start_id, end_id = 0, NEWS_PER_PAGE
+    if 'view-more' in request.GET:
+        page = int(request.GET['page']) + 1
+        start_id = page*NEWS_PER_PAGE
+        end_id = start_id + NEWS_PER_PAGE
+
+    articles_objects = Articles.objects.filter(
+        page_name=source).order_by('pk').reverse()[start_id:end_id]
+
+    context = {'displayed_news': articles_objects,
+               'page': page, 'page_name': source, 'all_sources': all_sources}
+    return render(request, 'show_news/source.html', context)
+
+
 def news_details(request, pk):
+    all_sources = Source_Of_News.objects.all()
     item = Articles.objects.get(pk=pk)
     related_news = Articles.objects.filter(page_name=item.page_name).filter(
         pk__lt=pk).order_by('pk').reverse()[0:4]
@@ -49,13 +68,15 @@ def news_details(request, pk):
     context = {'message': message,
                'object': item,
                'content': news_extractor.content,
-               'related_news': related_news}
+               'related_news': related_news,
+               'all_sources': all_sources}
 
     return render(request, 'show_news/news_details.html', context)
 
 
 def search(request):
     search_query = request.GET.get('search_box')
+    all_sources = Source_Of_News.objects.all()
     result = Articles.objects.filter(title__icontains=search_query)
     message = 'Result for \"' + search_query + '\"'
 
@@ -63,7 +84,9 @@ def search(request):
         message = 'No result for \"' + search_query
         result = None
 
-    context = {'result': result, 'message': message}
+    context = {'result': result,
+               'message': message,
+               'all_sources': all_sources}
 
     return render(request, 'show_news/search.html', context)
 
@@ -74,8 +97,11 @@ def settings(request):
 
     if request.method == 'POST':
         if 'add' in request.POST:
-
             url = request.POST['url']
+            if len(pages) > 3:
+                message = "Cannot add more sources due to the limitation of the databse. I am sorry!"
+                return render(request, 'show_news/settings.html', {
+                    'object': pages, 'message': message})
             if "https://" not in url:
                 message = 'The URL is not valid. Perhaps you mean ' + 'https://www.' + url
                 return render(request, 'show_news/settings.html', {
@@ -100,7 +126,7 @@ def settings(request):
 
                     message = 'Your newsfeed is updated with ' + \
                         str(number_of_articles) + ' new articles from ' + url
-
+            pages = Source_Of_News.objects.all()
             return render(request, 'show_news/settings.html', {
                 'object': pages, 'message': message})
         if 'remove_page' in request.POST:

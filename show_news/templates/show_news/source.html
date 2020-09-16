@@ -23,11 +23,11 @@
                 <ul>
                     <li><a href="{% url 'show_news:show_news' %}">Home</a></li>
                     <li class="btn-source">
-                        <a href="#">Sources</a>
+                        <a class="current" href="#">Sources</a>
                         <ul class="list-sources ">
-                            {% for item in object %}
+                            {% for page in all_sources %}
                             <div class="source-name">
-                                <li><a href="{% url 'show_news:view_source' item.page_name %}">{{item.page_name}}</a>
+                                <li><a href="{% url 'show_news:view_source' page.page_name %}">{{page.page_name}}</a>
                                 </li>
                             </div>
                             {% endfor %}
@@ -50,43 +50,38 @@
         </nav>
     </header>
 
-    <main class="content normal-view setting">
-        <section id="sources">
-            <div class="setting-name">
-                <h2> Manage Sources</h2>
-                <form class="submit-field" method='post' action="{% url 'show_news:settings' %}">{% csrf_token %}
-                    <label class="label-input-text" for="url">Title</label>
-                    <input type="text" name="url" id="url">
-                    <input class="btn btn-light" type="submit" name="add" value=" Add ">
-                </form>
-                {% if message %}
-                <p class="text-message"> {{message}}</p>
-                {% endif %}
+    <main class="content wide-view">
+        <section id="news-feed" class="news-feed">
+            <div class="grid-items">
+                {% for article in displayed_news %}
+                <div class="news-items">
+                    {% if not article.image_content_url %}
+                    <a href="{% url 'show_news:news_details' article.pk %}">
+                        <img src="{% static 'show_news/img/default-img.jpg' %}">
+                    </a>
+                    {% else %}
+                    <a href="{% url 'show_news:news_details' article.pk %}">
+                        <img src="{{article.image_content_url}}">
+                    </a>
+
+                    {% endif %}
+
+                    <p><a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></p>
+                    <p> by <span class="text-primary">{{page_name}}</span></p>
+                </div>
+                {% endfor %}
             </div>
+            <div class="view-more">
 
-            <div class="setting-properties">
-                {% if object %}
-                <form class="setting-page-items" method='post' action="{% url 'show_news:settings' %}">{% csrf_token %}
-                    {% for item in object %}
-                    <div class="setting-page-item">
-                        <input type="checkbox" name="item" id='{{item.page_name}}' value="{{item.page_name}}">
-                        <label for="{{item.page_name}}"> {{item.page_name}}</label>
-                    </div>
-                    {% endfor %}
-                    <div class="setting-page-item btn-remove">
-                        <input class="btn btn-dark" type="submit" name="remove_page" value="Remove">
-                    </div>
+                <form action=" {% url 'show_news:view_source' page_name %}">
+                    <input type="hidden" name="page" value="{{ page }}">
+                    <input class="btn btn-light" type="submit" value="Show More News" name="view-more">
                 </form>
-
-                {% else %}
-                <p class="text-message">There is nothing in the database, please add some pages</p>
-                {% endif %}
-
             </div>
         </section>
 
-    </main>
 
+    </main>
     <script>
         const search = document.querySelector('.navbar #search')
         btn_search = document.querySelector('.btn-search')
@@ -110,7 +105,6 @@
             }
         }
         btn_source.addEventListener('click', view_news_from_source, false)
-
     </script>
 </body>
 

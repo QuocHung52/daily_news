@@ -33,7 +33,7 @@ p {
 
 /* Navbar */
 .navbar {
-    background-color: rgb(105, 122, 137, 0.8);
+    background-color: #8795a1;
     color: #fff;
     width: 100%;
     height: 60px;
@@ -43,7 +43,6 @@ p {
 
 .navbar .nav-container {
     display: flex;
-    align-items: center;
     text-align: center;
     justify-content: space-between;
     max-width: 1100px;
@@ -59,6 +58,7 @@ p {
 
 .navbar ul {
     display: flex;
+    z-index: 10;
 }
 
 .navbar .current {
@@ -73,11 +73,40 @@ p {
     font-size: 1.12rem;
 }
 
-.navbar ul a:hover {
+.navbar li a:hover {
     color: #fff;
     border-bottom: #fff 2px solid ;
 }
 
+.nav-container .list-sources{
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+    background-color: #8795a1;
+    padding-top: 10px;
+    max-width: 100px;
+    border-radius: 6px;
+    border: none;
+    transition: 5s;
+}
+.nav-container .list-sources .source-name{
+    width: 100%;
+    border-bottom: 1px dashed #ccc;
+    padding: 5px 0;
+}
+
+.nav-container .list-sources .source-name:last-child{
+    border: none;
+}
+
+.nav-container .list-sources .source-name a{
+    font-size: 1.1rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
 
 /* Search Bar */
 .search-field {
@@ -89,10 +118,6 @@ p {
 
 .search-field input{
     width: 100%;
-}
-
-.hidden {
-    display: none;
 }
 
 .news-feed {
