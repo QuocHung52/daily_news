@@ -16,6 +16,7 @@
     <header id="header">
         <nav id="navbar" class="navbar">
             <div class="nav-container">
+
                 <h1>
                     <a class="logo" href="{% url 'show_news:show_news' %}">
                         <i class="far fa-newspaper"></i> Daily News</a>
@@ -39,8 +40,9 @@
                     <li><a href="#about"> About</a></li>
                     <li><a class="btn-search" href="#"><i class="fas fa-search"></i></a></li>
                 </ul>
+
             </div>
-            <div id="search" class="hidden">
+            <div id="search" class="search hidden">
                 <form class="submit-field search-field" action="{% url 'show_news:search' %}">
                     <input type="text" name='search_box' placeholder="Search for...">
                     <button class="btn btn-light" type="submit">Search</button>
@@ -83,14 +85,14 @@
 
     </main>
     <script>
-        const search = document.querySelector('#header #search')
-        btn_search = document.querySelector('.btn-search')
+        const search = document.querySelector('#header #search');
+        btn_search = document.querySelector('.btn-search');
         btn_search.addEventListener('click', () => {
             search.classList.remove('hidden');
         })
 
         view_source = document.querySelector('.nav-container .list-sources');
-        btn_source = document.querySelector('.navbar .btn-source')
+        btn_source = document.querySelector('.navbar .btn-source');
         let btn_source_state = false;
 
         var view_news_from_source = function (event) {
@@ -104,7 +106,7 @@
                 btn_source_state = false;
             }
         }
-        btn_source.addEventListener('click', view_news_from_source, false)
+        btn_source.addEventListener('click', view_news_from_source, false);
 
     </script>
 </body>

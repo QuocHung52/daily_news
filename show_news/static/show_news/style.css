@@ -33,23 +33,30 @@ p {
 
 /* Navbar */
 .navbar {
+    position: relative;
     background-color: #8795a1;
     color: #fff;
     width: 100%;
     height: 60px;
-    top: 0px;
-
 }
 
 .navbar .nav-container {
     display: flex;
     text-align: center;
+    align-items: center;
     justify-content: space-between;
-    max-width: 1100px;
     margin: auto;
-    padding: 15px 30px;
-    flex-wrap: wrap;
+    width: 100%;
+    height: 100%;
+    max-width: 1100px;
 }
+
+.navbar .search {
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+
 .navbar .logo {
     font-size: 1.6rem;
     line-height: 1.2;
@@ -58,7 +65,6 @@ p {
 
 .navbar ul {
     display: flex;
-    z-index: 10;
 }
 
 .navbar .current {
@@ -89,7 +95,9 @@ p {
     max-width: 100px;
     border-radius: 6px;
     border: none;
-    transition: 5s;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
 }
 .nav-container .list-sources .source-name{
     width: 100%;
