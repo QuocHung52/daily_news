@@ -20,7 +20,7 @@ class Extractor:
         self.url = url
         self.html = None
         if not parser:
-            self.parser = 'html5lib'
+            self.parser = 'lxml'
         self.title = ''
         self.content = ''
         self.published_time = ''
