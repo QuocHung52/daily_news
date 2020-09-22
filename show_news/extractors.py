@@ -20,7 +20,7 @@ class Extractor:
         self.url = url
         self.html = None
         if not parser:
-            self.parser = 'lxml'
+            self.parser = 'html5lib'
         self.title = ''
         self.content = ''
         self.published_time = ''
@@ -219,19 +219,101 @@ class Extractor:
 
         body = cleaned_html.find('body')
         extractor = Content_Extractor.create(body)
-        content = extractor.extract()
-        if not content:
+        # content = extractor.extract()
+        best_node = extractor.extract()
+        if not best_node:
             self.messages = 'Cannot get content from ' + self.url
             return ''
-        content = content.split('\n')
-        return content
+
+        def get_img(tag):
+            img_pattern = re.compile(r'\/.+(jpg|jpeg|png|webp)')
+            attrs_check = ['data-original', 'src',
+                           'srcset', 'data-src', 'data-srcset']
+            found = []
+            img_name = []
+            img_url = []
+
+            for att in attrs_check:
+                for t in tag.find_all(attrs={att: img_pattern}):
+                    found.append(t.attrs[att])
+            for n in found:
+                name = re.sub('\s.+', '', n.split('/')[-1])
+                if name not in img_name:
+                    img_name.append(name)
+                    img_url.append(n)
+            return img_url
+
+        def get_img_tag(node, url):
+            img_url = get_img(node)
+            if not img_url:
+                return ''
+            img_url = urljoin(url, img_url[0])
+            cite = []
+            for i in node.descendants:
+                if i != '\n' and isinstance(i, bs4.element.NavigableString):
+                    cite.append(i)
+
+            figcaption = ''
+
+            for c in cite:
+                figcaption = figcaption + c + ' '
+
+            tag = '<figure><img src="' + img_url + '" alt=""><figcaption>' + \
+                figcaption + '</figcaption></figure>'
+            return tag
+
+        children = list(best_node.soup.children)
+        article_list = []
+        while children:
+            next_child = []
+            group_text = ''
+            for i in range(len(children)):
+                if children[i] == '\n':
+                    if group_text:
+                        if group_text[0] != '<' and group_text[-1] != '>':
+                            group_text = '<p>' + group_text + '</p>'
+                        article_list.append(group_text)
+                    group_text = ''
+
+                elif isinstance(children[i], bs4.element.NavigableString):
+                    group_text += children[i] + ' '
+
+                elif children[i].name == 'br':
+                    group_text += str(children[i])
+
+                elif children[i].name in ['a', 'blockquote', 'p', 'span', 'code', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                    group_text += str(children[i])
+
+                elif children[i].name in ['figure', 'img', 'picture']:
+                    group_text += get_img_tag(children[i], self.url)
+
+                elif children[i].name in ['audio', 'video', 'footer', 'iframe']:
+                    pass
+
+                else:
+                    next_child.extend(list(children[i].children))
+                    next_child.extend(children[i+1:])
+                    break
+            if group_text:
+                article_list.append(group_text)
+            children = next_child
+
+        joined_articles = ''.join(article_list)
+        soup = bs4.BeautifulSoup(
+            '<div class="article">' + joined_articles + '</div>', 'lxml')
+        content = soup.find('div', attrs={'class': 'article'})
+        return str(content)
 
     def clean_tags(self, html):
         # Unwarp tags
-        merging_tags = ['p', 'br', 'li', 'table',
-                        'tbody', 'tr', 'td', 'theader', 'tfoot']
+        merging_tags = ['li', 'table', 'tbody', 'tr', 'td',
+                        'theader', 'tfoot', 'em', 'strong', 'i', 'u', 'b']
         tags = html.find_all(merging_tags)
         for tag in tags:
+            tag.unwrap()
+
+        for tag in html.find_all('p'):
+            tag.append(html.new_tag('br'))
             tag.unwrap()
 
         # Remove tags:

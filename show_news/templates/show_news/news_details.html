@@ -66,9 +66,7 @@
         </section>
         <section class="news-detail-content">
             <div class="column-1">
-                {% for p in content %}
-                <p>{{p}}</p>
-                {% endfor %}
+                {{content|safe }}
             </div>
             <div class="column-2">
                 <div class="item">

@@ -31,7 +31,8 @@
 }
 
 .text-primary {
-    color: #e2127A;
+    /* color: #e2127A; */
+    color: #ff0080;
 }
 
 .text-secondary {

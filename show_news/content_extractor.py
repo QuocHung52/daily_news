@@ -141,13 +141,14 @@ class Content_Extractor:
                 if best_score < node.density_sum:
                     best_node = node
                     best_score = node.density_sum
-        if best_node:
-            best_node = bs4.BeautifulSoup(str(best_node.soup), 'lxml')
-            text = ''
-            for child in best_node.descendants:
-                if isinstance(child, bs4.element.NavigableString):
-                    if not child == '\n':
-                        text += child
-            self.best_node = best_node
-            return text
-        return ''
+        # if best_node:
+        #     best_node = bs4.BeautifulSoup(str(best_node.soup), 'lxml')
+        #     text = ''
+        #     for child in best_node.descendants:
+        #         if isinstance(child, bs4.element.NavigableString):
+        #             if not child == '\n':
+        #                 text += child
+        #     self.best_node = best_node
+        #     return text
+        # return ''
+        return best_node
