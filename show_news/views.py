@@ -6,7 +6,7 @@ from .extractors import *
 import time
 # Create your views here.
 
-ARTICLE_PER_PAGE = 4
+ARTICLE_PER_PAGE = 6
 
 
 def show_news(request):

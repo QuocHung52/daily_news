@@ -69,7 +69,8 @@
                     {% endif %}
 
                     <p><a href="{% url 'show_news:news_details' article.pk %}"> {{ article.title }} </a></p>
-                    <p> by <span class="text-primary">{{page_name}}</span></p>
+                    <p> by <a href="{% url 'show_news:view_source' page_name %}"><span
+                                class="text-primary">{{page_name}}</span></a></p>
                 </div>
                 {% endfor %}
                 {% endfor %}
